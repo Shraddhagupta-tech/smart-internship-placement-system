@@ -1,4 +1,4 @@
-🎓 Internship & Placement Management System
+🎓 Smart Internship & Placement Management System
 A full-stack web application that manages student internship applications, tracks placement performance, and provides analytics for decision-making.
 This system simulates a real-world campus placement environment where students apply for internships, organizations post opportunities, and administrators analyze outcomes using data-driven insights.
 
