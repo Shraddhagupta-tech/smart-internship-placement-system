@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students</title>
+</head>
+<body>
+    <h1>Students </h1>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Branch</th>
+            <th>CGPA</th>
+            <th>Attendence (in%)</th>
+            <th>Backlogs</th>
+        </tr>
+        {% for s in student %}
+        <tr>
+            <td>{{s.student_id}}</td>
+            <td>{{s.name}}</td>
+            <td>{{s.branch}}</td>
+            <td>{{s.cgpa}}</td>
+            <td>{{s.attendence}}</td>
+            <td>{{s.backlogs}}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+    
+</body>
+</html>

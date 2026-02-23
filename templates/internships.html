@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship</title>
+</head>
+<body>
+    <h1>Internships</h1>
+    <table border="1">
+        <tr>
+            <th>Internship ID</th>
+            <th>Company ID</th>
+            <th>Role</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Min CGPA Required</th>
+            <th>Maximum Backlogs Allowed</th>
+            <th>Stipend</th>
+            <th>Status</th>
+        </tr>
+        {% for i in internship %}
+        <tr>
+            <td>{{i.internship_id}}</td>
+            <td>{{i.company_id}}</td>
+            <td>{{i.role}}</td>
+            <td>{{i.start_date}}</td>
+            <td>{{i.end_date}}</td>
+            <td>{{i.min_cgpa}}</td>
+            <td>{{i.max_backlogs_allowed}}</td>
+            <td>{{i.stipend}}</td>
+            <td>{{i.status}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
