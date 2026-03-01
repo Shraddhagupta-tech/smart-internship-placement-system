@@ -10,16 +10,24 @@ app.secret_key='super-secret'
 def home():
     return redirect(url_for('login'))
 
-@app.route('/dashboard')
-def dashboard():
+@app.route('/student_dashboard')
+def student_dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    return render_template('index.html')
+    return render_template('student_dashboard.html')
+
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    return render_template('admin_dashboard.html')
 
 @app.route('/students')
 def students():
     if 'user_id' not in session:
         return redirect(url_for('login'))
+    if session.get('role')!='Admin':
+        return 'Access Denied',403
     conn=get_connection()
     cursor=conn.cursor(dictionary=True)
     cursor.execute('select * from student')
@@ -32,6 +40,8 @@ def students():
 def apply():
     if 'user_id' not in session:
         return redirect(url_for('login'))
+    if session.get('role')=='Admin':
+        return 'Access Denied',403
     if request.method=='POST':
         try:
             student_id=request.form.get('student_id')
@@ -57,7 +67,6 @@ def apply():
         finally:
             cursor.close()
             conn.close()
-
         return redirect(url_for('apply'))
     return render_template('apply.html')
 
@@ -77,6 +86,8 @@ def internships():
 def analytics():
     if 'user_id' not in session:
         return redirect(url_for('login'))
+    if session.get('role')!='Admin':
+        return 'Access Denied',403
     conn=get_connection()
     cursor=conn.cursor()
     cursor.execute('select count(*) from student')
@@ -115,7 +126,10 @@ def register():
             hashed_password = generate_password_hash(password)
             conn=get_connection()
             cursor=conn.cursor()
-            cursor.execute('insert into user (name,email_id,password) values (%s,%s,%s)',(name,email_id,hashed_password))
+            if password=='admin@123':
+                cursor.execute("insert into user (name,email_id,password,role) values (%s,%s,%s,'Admin')",(name,email_id,hashed_password))
+            else:
+                cursor.execute('insert into user (name,email_id,password) values (%s,%s,%s)',(name,email_id,hashed_password))
             conn.commit()
             return redirect(url_for('login'))
         except Exception as e:
@@ -135,17 +149,21 @@ def login():
             email_id=request.form.get('email_id')   
             password=request.form.get('password')   
             conn=get_connection()  
-            cursor=conn.cursor()
-            cursor.execute('select user_id,password from user where email_id=%s',(email_id,))
+            cursor=conn.cursor(dictionary=True)
+            cursor.execute('select u.user_id,password,role, student_id from user u join student s on u.user_id=s.user_id where email_id=%s',(email_id,))
             user=cursor.fetchone()
-            if user and check_password_hash(user[1], password):
-                session['user_id'] = user[0]
-                return redirect(url_for('dashboard'))
+            if user and check_password_hash(user['password'], password):
+                session['user_id'] = user['user_id']
+                session['role'] = user['role']
+                if session['role']=='Admin':
+                    return redirect(url_for('admin_dashboard'))
+                elif session['role']=='Student':
+                    return redirect(url_for('student_dashboard'))
             else:
                 return "Invalid email or password"
         except Exception as e:
             print(e)
-            return ('Somethimg went wrong')
+            return (f'Somethimg went wrong {e} ')
         finally:
             cursor.close()
             conn.close()
