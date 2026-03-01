@@ -150,7 +150,7 @@ def login():
             password=request.form.get('password')   
             conn=get_connection()  
             cursor=conn.cursor(dictionary=True)
-            cursor.execute('select u.user_id,password,role, student_id from user u join student s on u.user_id=s.user_id where email_id=%s',(email_id,))
+            cursor.execute('select user_id,password,role from user where email_id=%s',(email_id,))
             user=cursor.fetchone()
             if user and check_password_hash(user['password'], password):
                 session['user_id'] = user['user_id']
